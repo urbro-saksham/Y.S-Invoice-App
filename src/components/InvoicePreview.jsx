@@ -23,6 +23,7 @@ export default function InvoicePreview({ data = {} }) {
     cgstPercent = 9,
     sgstPercent = 9,
     taxAmount = 0, // invoice-level taxable base override
+    showStamp,
   } = data || {};
 
   const fmt = (n) => {
@@ -519,19 +520,20 @@ export default function InvoicePreview({ data = {} }) {
         </div>
         <div className="w-[200px] text-center">
           <div className="mb-1">For Y.S. VIRTUAL COMMUNITY</div>
-          <div className="w-[200px] h-[85px] flex items-center justify-center">
-            {stampUrl ? (
+
+          {showStamp && (
+            <div className="w-[200px] h-[85px] flex items-center justify-center">
               <img
                 src={stampUrl}
                 alt="stamp"
                 crossOrigin="anonymous"
                 className="max-w-full max-h-full object-contain"
               />
-            ) : (
-              <span className="text-[10px] text-gray-500">Stamp</span>
-            )}
-          </div>
-          <div className="mt-1">Authorized signatory</div>
+            </div>
+          )}
+          {showStamp && (
+            <div className="mt-1">Authorized signatory</div>
+          )}
         </div>
       </div>
     </div>

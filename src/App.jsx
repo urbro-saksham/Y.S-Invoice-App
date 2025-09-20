@@ -40,6 +40,7 @@ export default function App() {
   const [cgstPercent, setCgstPercent] = useState(9);
   const [sgstPercent, setSgstPercent] = useState(9);
   const [igstPercent, setIgstPercent] = useState(18);
+  const [showStamp, setShowStamp] = useState(true);
   const [taxAmount, setTaxAmount] = useState(0);
 
   const stageRef = useRef(null);
@@ -125,8 +126,10 @@ export default function App() {
       // fill full page, no shrink
       pdf.addImage(imgData, "PNG", 0, 0, pageWidth, pageHeight);
 
-      const fileName = `Invoice-${(watch("invoiceNo") || "Draft")
-        .replace(/[^a-z0-9-_]/gi, "_")}.pdf`;
+      const fileName = `Invoice-${(watch("invoiceNo") || "Draft").replace(
+        /[^a-z0-9-_]/gi,
+        "_"
+      )}.pdf`;
 
       pdf.save(fileName);
       console.log("PDF saved:", fileName);
@@ -144,7 +147,11 @@ export default function App() {
         <div className="mx-auto max-w-7xl px-4 py-3 flex items-center justify-between gap-4">
           <h1 className="text-lg font-semibold">Y.S Invoice Builder</h1>
           <div className="flex items-center gap-2">
-            <button className="btn-secondary" type="button" onClick={() => append({ ...defaultItem })}>
+            <button
+              className="btn-secondary"
+              type="button"
+              onClick={() => append({ ...defaultItem })}
+            >
               Add Item
             </button>
             <button className="btn-primary" type="button" onClick={onSubmit}>
@@ -157,28 +164,52 @@ export default function App() {
       <main className="mx-auto max-w-7xl px-4 py-6 grid grid-cols-1 lg:grid-cols-2 gap-6">
         <form className="card p-4 lg:p-6" onSubmit={handleSubmit(onSubmit)}>
           <InvoiceHeaderFields register={register} />
-          <PartyFields 
-            register={register} 
-            setIsIgst={setIsIgst} 
-            isIgst={isIgst} 
-            setCgstPercent={setCgstPercent} 
-            setSgstPercent={setSgstPercent} 
+          <PartyFields
+            register={register}
+            setIsIgst={setIsIgst}
+            isIgst={isIgst}
+            setCgstPercent={setCgstPercent}
+            setSgstPercent={setSgstPercent}
             setIgstPercent={setIgstPercent}
             setTaxAmount={setTaxAmount}
             taxAmount={taxAmount}
           />
-          <ItemsTable fields={fields} items={items} register={register} remove={remove} />
+          <ItemsTable
+            fields={fields}
+            items={items}
+            register={register}
+            remove={remove}
+          />
 
           <div className="mt-4 flex items-center gap-3 justify-end text-sm">
-            <div className="min-w-48 text-right"><span className="muted">Subtotal:</span> ₹ {currency(totals.subTotal)}</div>
-            <div className="min-w-48 text-right"><span className="muted">Tax:</span> ₹ {currency(totals.tax)}</div>
-            <div className="min-w-48 text-right font-semibold"><span className="muted">Total:</span> ₹ {currency(totals.total)}</div>
+            <div className="min-w-48 text-right">
+              <span className="muted">Subtotal:</span> ₹{" "}
+              {currency(totals.subTotal)}
+            </div>
+            <div className="min-w-48 text-right">
+              <span className="muted">Tax:</span> ₹ {currency(totals.tax)}
+            </div>
+            <div className="min-w-48 text-right font-semibold">
+              <span className="muted">Total:</span> ₹ {currency(totals.total)}
+            </div>
           </div>
 
           {/* <NotesTerms register={register} /> */}
 
           <div className="mt-6 flex justify-end">
-            <button className="btn-primary" type="submit">Save & Download</button>
+            <div>
+              <label className="flex items-center gap-2 mt-1 text-white/80">
+                <input
+                  type="checkbox"
+                  checked={showStamp}
+                  onChange={() => setShowStamp(!showStamp)}
+                />
+                Show Stamp
+              </label>
+            </div>
+            <button className="btn-primary" type="submit">
+              Save & Download
+            </button>
           </div>
         </form>
 
@@ -191,8 +222,8 @@ export default function App() {
                 invoiceDate: watch("invoiceDate"),
                 billTo: watch("billTo"),
                 items: watch("items"),
-                logoUrl: '/logo.png',
-                stampUrl: '/stamp.png',
+                logoUrl: "/logo.png",
+                stampUrl: "/stamp.png",
                 mobileNumber: watch("mobileNumber"),
                 panNo: watch("panNo"),
                 gstin: watch("gstin"),
@@ -201,10 +232,14 @@ export default function App() {
                 cgstPercent,
                 sgstPercent,
                 taxAmount,
+                showStamp,
               }}
             />
           </div>
-          <p className="muted text-xs">Preview matches the invoice blueprint. Fine-tune field positions as needed.</p>
+          <p className="muted text-xs">
+            Preview matches the invoice blueprint. Fine-tune field positions as
+            needed.
+          </p>
         </section>
       </main>
     </div>
