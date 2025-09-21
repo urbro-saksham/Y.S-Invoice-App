@@ -297,7 +297,7 @@ export default function InvoicePreview({ data = {} }) {
             <th className="border border-black px-1 py-3 w-[30px] h-[35px]">
               S.N.
             </th>
-            <th className="border border-black px-1 py-3 text-left w-[200px] h-[35px]">
+            <th className="border border-black px-1 py-3 text-left w-[2000px] h-[35px]">
               Description of Services / Description
             </th>
             <th className="border border-black px-1 py-3 w-[80px] h-[35px]">
@@ -325,10 +325,10 @@ export default function InvoicePreview({ data = {} }) {
               </>
             )}
 
-            <th className="border border-black px-1 py-3 w-[70px] h-[35px]">
+            <th className="border border-black px-1 py-3 w-[50px] h-[35px]">
               TAX AMOUNT
             </th>
-            <th className="border border-black px-1 py-3 w-[70px] h-[35px]">
+            <th className="border border-black px-1 py-3 w-[50px] h-[35px]">
               NET AMOUNT
             </th>
           </tr>
