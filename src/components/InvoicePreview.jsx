@@ -44,19 +44,41 @@ export default function InvoicePreview({ data = {} }) {
   const derived = useMemo(() => {
     // Build rows with row-level tax calculations
     const rows = (items || []).map((it = {}) => {
-      // original pattern: use item.amount if present, else fallback to qty * rate
-      const amount = Number(it.amount) || Number(it.qty) * Number(it.rate) || 0;
+      const amount =
+        Number(it.inneramount) ||
+        Number(it.amount) ||
+        (Number(it.qty) * Number(it.price)) ||
+        0;
+
+      let rate = 0;
+      if (it.inneramount > 0) {
+        if (isIgst) {
+          rate = Number(it.inneramount) - (Number(it.inneramount) * parsedIgstPercent) / 100;
+        } else {
+          rate = Number(it.inneramount) - (Number(it.inneramount) * (parsedCgstPercent + parsedSgstPercent)) / 100;
+        }
+      }
+      else {
+        rate = it.price || 0;
+      }
 
       const itemIgst = isIgst ? (amount * parsedIgstPercent) / 100 : 0;
       const itemCgst = !isIgst ? (amount * parsedCgstPercent) / 100 : 0;
       const itemSgst = !isIgst ? (amount * parsedSgstPercent) / 100 : 0;
 
       const tax = itemIgst + itemCgst + itemSgst;
-      const netAmount = amount + tax;
+      // const netAmount = amount + tax;
+      let netAmount = 0;
+      if (it.inneramount > 0) {
+        netAmount = Number(it.inneramount);
+      } else {
+        netAmount = amount + tax;
+      }
 
       return {
         ...it,
         amount,
+        rate,   // 👈 add this
         itemIgst,
         itemCgst,
         itemSgst,
@@ -65,7 +87,7 @@ export default function InvoicePreview({ data = {} }) {
       };
     });
 
-    const subTotal = rows.reduce((acc, r) => acc + (Number(r.amount) || 0), 0);
+    const subTotal = rows.reduce((acc, r) => acc + (Number(r.rate) || 0), 0);
 
     const parsedTaxAmount = Number(taxAmount) || 0;
     const taxableBase = parsedTaxAmount > 0 ? parsedTaxAmount : subTotal;
@@ -80,6 +102,8 @@ export default function InvoicePreview({ data = {} }) {
     const totalAmount = Math.floor(rawTotal); // nearest rupee
     const roundOff =  rawTotal - totalAmount;
 
+  const totalNetAmount = rows.reduce((acc, r) => acc + (Number(r.netAmount) || 0), 0);
+
 
     return {
       rows,
@@ -89,6 +113,7 @@ export default function InvoicePreview({ data = {} }) {
       cgst,
       sgst,
       totalAmount,
+      totalNetAmount,
       roundOff,
       rawTotal
     };
@@ -426,7 +451,8 @@ export default function InvoicePreview({ data = {} }) {
               {fmt(derived.igst + derived.cgst + derived.sgst)}
             </td>
             <td className="border border-black px-1 py-3 text-right">
-              {fmt(derived.totalAmount)}
+              {/* {fmt(derived.totalAmount)} */}
+               {fmt(derived.totalNetAmount)}
             </td>
           </tr>
         </tbody>
@@ -485,7 +511,10 @@ export default function InvoicePreview({ data = {} }) {
               </div>
               <div className="flex justify-between font-bold mb-1">
                 <span>Total Amount</span>
-                <span>{fmt(derived.totalAmount)}</span>
+                <span>
+                  {/* {fmt(derived.totalAmount)} */}
+                   {fmt(derived.totalNetAmount)}
+                  </span>
               </div>
             </td>
           </tr>
