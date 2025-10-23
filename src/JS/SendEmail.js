@@ -7,6 +7,7 @@ const sendEmailNotification = (invoiceNo, total, items) => {
         `${idx + 1}. ${item.description || "No Name"} — Qty: ${item.qty} — ₹${item.amount}`
     )
     .join('\n');
+    // git@github.com:urbro-saksham/Y.S-Invoice-App.git
 
   emailjs
     .send(
