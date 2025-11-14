@@ -102,7 +102,8 @@ export default function InvoicePreview({ data = {} }) {
     const totalAmount = Math.floor(rawTotal); // nearest rupee
     const roundOff =  rawTotal - totalAmount;
 
-  const totalNetAmount = rows.reduce((acc, r) => acc + (Number(r.netAmount) || 0), 0);
+  let totalNetAmount = rows.reduce((acc, r) => acc + (Number(r.netAmount) || 0), 0);
+  totalNetAmount -= roundOff;
 
 
     return {
